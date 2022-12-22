@@ -1,7 +1,9 @@
 package Controlador;
 import java.util.Scanner;
 
+import Modelo.Coliseo;
 import Modelo.Personaje;
+import Modelo.Coliseo.tipoColiseo;
 import Modelo.Personaje.Liga;
 
 public class Principal {
@@ -33,13 +35,11 @@ public class Principal {
         switch(numeroError){
             case 1 : {
                 System.out.println("Introduzca un numero válido por favor");
-                
+                break;
             }
             case 2 : {
                 System.out.println("Esta funcionalidad se encuentra en desarrollo");
-            }
-            default : {
-
+                break;
             }
         }
     }
@@ -65,67 +65,189 @@ public class Principal {
         System.out.println("- 1.- Crear Personaje -----------------------------");
         System.out.println("- 2.- Mostrar Personajes Creados ------------------");
         System.out.println("- 3.- Batallar ------------------------------------");
-        System.out.println("- 0.- Salir ---------------------------------------");
+        System.out.println("- 4.- Salir ---------------------------------------");
+        System.out.println("---------------------------------------------------");
+        opcionSeleccionada=introducirNumero();
+        return opcionSeleccionada;
+    }
+    public static int menuPersonaje(){
+        int opcionSeleccionada;
+        limpiarPantalla();
+        System.out.println("------RPG CAT AVENGERS: CREACIÓN DE PERSONAJE------");
+        System.out.println("-------------Selecccione una opción----------------");
+        System.out.println("- 1.- Crear Personaje dando Atributos -------------");
+        System.out.println("- 2.- Crear Personaje con Atributos aleatorios ----");
+        System.out.println("- 3.- Salir ---------------------------------------");
         System.out.println("---------------------------------------------------");
         opcionSeleccionada=introducirNumero();
         return opcionSeleccionada;
     }
 
+    public static Coliseo crearColiseo(){
+        String nombreColiseo;
+        Coliseo coliseoCreado;
+        System.out.println("Antes de empezar, dame un nombre para tu Arena de Batalla: ");
+        nombreColiseo=lector.nextLine();
+        return coliseoCreado = new Coliseo(nombreColiseo);
+    }
+
+    public static Liga pedirLiga(){
+        int opcion;
+        Liga liga = null;
+        boolean opcionValida;
+        do{
+            opcionValida=true;
+            System.out.println("---------------LIGA DE TU PERSONAJE----------------");
+            System.out.println("-------------Selecccione una opción----------------");
+            System.out.println("- 1.- JUSTICIA ------------------------------------");
+            System.out.println("- 2.- JUVENIL -------------------------------------");
+            System.out.println("- 3.- NEUTRAL -------------------------------------");
+            System.out.println("- 4.- PICARO --------------------------------------");
+            System.out.println("- 5.- TERROR --------------------------------------");
+            System.out.println("---------------------------------------------------");
+            opcion=introducirNumero();
+
+            switch(opcion){
+                case 1 : {
+                    liga=Liga.JUSTICIA;
+                    break;
+                }
+                case 2 : {
+                    liga=Liga.JUVENIL;
+                    break;
+                }
+                case 3 : {
+                    liga = Liga.NEUTRAL;
+                    break;
+                }
+                case 4 : {
+                    liga = Liga.PICARO;
+                    break;
+                }
+                case 5 : {
+                    liga = Liga.TERROR;
+                    break;
+                }
+                default : {
+                    mostrarError(1);
+                    opcionValida=false;
+                    break;
+                }
+            }  
+        } while (!opcionValida);
+        return liga;
+    }
+
+    public static Personaje crearPersonajeConAtributos(){
+        String nombre;
+        Liga liga;
+        Personaje personajeCreado;
+        int vida, ataque, defensa, ataqueSpecial, defensaSpecial, velocidad;
+
+        System.out.println("Dame el nombre del personaje: ");
+        nombre=lector.nextLine();
+        liga=pedirLiga();
+        System.out.println("Dame la vida del personaje: ");
+        vida=introducirNumero();
+        System.out.println("Dame el ataque del personaje: ");
+        ataque=introducirNumero();
+        System.out.println("Dame la defensa del personaje: ");
+        defensa=introducirNumero();
+        System.out.println("Dame el ataque especial del personaje: ");
+        ataqueSpecial=introducirNumero();
+        System.out.println("Dame la defensa especial del personaje: ");
+        defensaSpecial=introducirNumero();
+        System.out.println("Dame la velocidad del personaje: ");
+        velocidad=introducirNumero();
+
+        return personajeCreado = new Personaje(nombre, liga, vida, ataque, defensa, ataqueSpecial, defensaSpecial, velocidad);
+    }
+
+    public static Personaje crearPersonajeSinAtributos () {
+        String nombre;
+        Liga liga;
+        Personaje personajeCreado;
+        System.out.println("Dame el nombre del personaje: ");
+        nombre=lector.nextLine();
+        liga=pedirLiga();
+
+        return personajeCreado= new Personaje (nombre, liga);
+    }
+
     public static void main(String[] args) {
 
+        int opcionSeleccionada;
+        Coliseo coliseoCreado;
+        Personaje personajeCreado;
 
-        int opcionSeleccionada=menuPrincipal();
-        int opcionSubmenu;
-
+        coliseoCreado=crearColiseo();
+        
         do{
+            opcionSeleccionada=menuPrincipal();
             switch(opcionSeleccionada){
                 case 1: {
                     //Modo Individual
+                    coliseoCreado.setTipoColiseo(tipoColiseo.INDIVIDUAL);
                     do {
-                        opcionSubmenu=menuBatallaIndividual();
-                        switch(opcionSubmenu){
-                            
+                        opcionSeleccionada=menuBatallaIndividual();
+                        switch(opcionSeleccionada){
                             case 1: {
-                                //Crear Personaje
+                                do {
+                                    opcionSeleccionada=menuPersonaje();
+                                    switch(opcionSeleccionada){
+                                        case 1: {
+                                            personajeCreado=crearPersonajeConAtributos();
+                                            coliseoCreado.anadirLuchador(personajeCreado);
+                                            pulseIntro();
+                                            break;
+                                        }
+                                        case 2: {
+                                            personajeCreado=crearPersonajeSinAtributos();
+                                            coliseoCreado.anadirLuchador(personajeCreado);
+                                            pulseIntro();
+                                            break;
+                                        }
+                                        default :{
+                                            mostrarError(1);
+                                        }
+                                    }
+                                } while (opcionSeleccionada!=3);
+                                break;
                             }
                             case 2: {
-                                //Mostrar info del personaje
+                                if (coliseoCreado.getNumeroLuchadores()!=0){
+                                coliseoCreado.mostrarLuchadores();
+                                pulseIntro();
+                                }
+                                break;
                             }
                             case 3: {
                                 //Batallar
+                                break;
                             }
                             case 4 : {
                                 //Volver al menú principal
+                                break;
                             }
                             default : {
-
+                                break;
                             }
                         }
 
-                    } while (opcionSubmenu!=4);
+                    } while (opcionSeleccionada!=4);
+                    break;
                 } 
                 
                 case 2: {
                     mostrarError(2);
+                    break;
                 } 
                 
                 default: {
                     mostrarError(1);
+                    break;
                 }
             } 
         }while(opcionSeleccionada!=0);
-
-        Personaje p1 = new Personaje("Remanente", Liga.JUVENIL);
-        Personaje p2 = new Personaje("Terrorcito", Liga.TERROR);
-
-        
-
-    do {
-        p2.realizarAtaque(p1);
-        pulseIntro();
-        p1.realizarAtaque(p2);
-        pulseIntro();
-    } while (p1.getVida()>0 && p2.getVida()>0);
-
     }
 }

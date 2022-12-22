@@ -2,19 +2,27 @@ package Modelo;
 
 public class Personaje {
 
+    public enum Liga {JUSTICIA, TERROR, NEUTRAL, PICARO, JUVENIL};
+
     private String nombre;
-    private String Liga;
+    private Liga Liga;
     private int vida;
     private int ataque;
     private int defensa;
     private int ataqueSpecial;
     private int defensaSpecial;
     private int velocidad;
-    private int ataqueDisponible=1; //solo un ataque Especial
-    private boolean sobrevivir=true; //solo una Defensa Especial
-    private boolean muerto=false; //para saber si ha muerto o no
+    private int ataqueDisponible; //solo un ataque Especial
+    private boolean sobrevivir; //solo una Defensa Especial
+    private boolean muerto; //para saber si ha muerto o no
 
-    public Personaje (String nombre, String Liga, int vida, int ataque, int defensa, int ataqueSpecial, int defensaSpecial, int velocidad){
+    public Personaje(){
+        this.ataqueDisponible=1;
+        this.sobrevivir=true;
+        this.muerto=false;
+    }
+
+    public Personaje (String nombre, Liga Liga, int vida, int ataque, int defensa, int ataqueSpecial, int defensaSpecial, int velocidad){
         this.nombre=nombre;
         this.Liga=Liga;
         this.vida=vida;
@@ -23,9 +31,12 @@ public class Personaje {
         this.ataqueSpecial=ataqueSpecial;
         this.defensaSpecial=defensaSpecial;
         this.velocidad=velocidad;
+        this.ataqueDisponible=1;
+        this.sobrevivir=true;
+        this.muerto=false;
     }
 
-    public Personaje (String nombre, String Liga){
+    public Personaje (String nombre, Liga Liga){
         this.nombre=nombre;
         this.Liga=Liga;
         this.vida= (int)(Math.random()*50+1);
@@ -34,6 +45,9 @@ public class Personaje {
         this.ataqueSpecial= (int)(Math.random()*50+1);
         this.defensaSpecial=(int)(Math.random()*50+1);
         this.velocidad=(int)(Math.random()*50+1);
+        this.ataqueDisponible=1;
+        this.sobrevivir=true;
+        this.muerto=false;
     }
 
     public String getNombre(){
@@ -42,10 +56,10 @@ public class Personaje {
     public String setNombre(String nombre){
         return this.nombre=nombre;
     }
-    public String getLiga(){
+    public Liga getLiga(){
         return this.Liga;
     }
-    public String setLiga(String Liga){
+    public Liga setLiga(Liga Liga){
         return this.Liga=Liga;
     }
     public int getVida(){
@@ -84,6 +98,9 @@ public class Personaje {
     public int setVelocidad (int velocidad){
         return this.velocidad=velocidad;
     }
+    public int getAtaquesEspecialesDisponibles(){
+        return this.ataqueDisponible;
+    }
 
     //Devuelve true si el personaje que lo invoca es más Rápido que el objetivo
     public boolean compararVelocidad(Personaje personaje){
@@ -95,6 +112,7 @@ public class Personaje {
     }
     public void recargarAtaqueSpecial(){
         ataqueDisponible++;
+        System.out.println(this.nombre + " tiene disponibles " + getAtaquesEspecialesDisponibles() + " ataques especiales disponibles");
     }
 
     public void realizarAtaque(Personaje personaje){
@@ -114,12 +132,12 @@ public class Personaje {
     }
 
     private void accionDeAtaque(Personaje personaje, int ataque, String tipoAtaque){
-        if (!this.muerto){
+        if (!this.muerto){ //solo se activa si el personaje no ha muerto
         int ataqueRealizado=infoAtaque(personaje, ataque, tipoAtaque);
         ataqueRealizado = quitarAtaqueNegativo(ataqueRealizado);
-        int vidaRestante=comprobarMuerte(ataqueRealizado, personaje); 
+        int vidaRestante=comprobarVida(ataqueRealizado, personaje); //por si hay que activar defensa Special
         personaje.setVida(vidaRestante);
-        personaje.comprobarVida(); //para saber si ha muerto o no
+        personaje.comprobarMuerte(); //para saber si ha muerto o no
         }
     }
 
@@ -132,13 +150,13 @@ public class Personaje {
     }
 
     private int quitarAtaqueNegativo (int ataqueRealizado){
-        if (ataqueRealizado<=0){ //para evitar números negativos y que los ataques no sumen vida
+        if (ataqueRealizado<=0){ //este método se usa para evitar números negativos y que los ataques no sumen vida
         ataqueRealizado=0;
         }
         return ataqueRealizado;
     }
 
-    private int comprobarMuerte(int ataqueRealizado, Personaje personaje){
+    private int comprobarVida(int ataqueRealizado, Personaje personaje){
         int vidaRestante=personaje.getVida()-ataqueRealizado;
         if (vidaRestante<=0 && sobrevivir){ //la variable sobrevivir hace que solo se pueda invocar la defensa especial una sola vez
             System.out.println("Parece que " + personaje.getNombre() + " se ha visto obligado a usar su Defensa Especial de "+ personaje.getDefensaSpecial()+" puntos para evitar la muerte");
@@ -151,7 +169,7 @@ public class Personaje {
         return vidaRestante;
     }
 
-    private void comprobarVida (){
+    private void comprobarMuerte (){
         if (this.vida <=0){
             System.out.println("Vaya, parece que " + this.nombre + " ha muerto");
             muerto=true;
@@ -159,6 +177,4 @@ public class Personaje {
             System.out.println("A " +this.nombre + " le quedan " + this.vida + " puntos de vida");
         }
     }
-
-
 }

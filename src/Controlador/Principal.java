@@ -2,6 +2,7 @@ package Controlador;
 import java.util.Scanner;
 
 import Modelo.Personaje;
+import Modelo.Personaje.Liga;
 
 public class Principal {
 
@@ -21,8 +22,8 @@ public class Principal {
     }
 
     public static void main(String[] args) throws Exception {
-        Personaje p1 = new Personaje("Remanente", "TERROR");
-        Personaje p2 = new Personaje("Terrorcito", "JUSTICIA");
+        Personaje p1 = new Personaje("Remanente", Liga.JUVENIL);
+        Personaje p2 = new Personaje("Terrorcito", Liga.TERROR);
 
     do {
         p2.realizarAtaque(p1);

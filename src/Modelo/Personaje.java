@@ -51,8 +51,8 @@ public class Personaje {
     public int getVida(){
         return this.vida;
     }
-    public int setVida (int vida){
-        return this.vida=vida;
+    public void setVida (int vida){
+        this.vida=vida;
     }
     public int getAtaque(){
         return this.ataque;
@@ -75,6 +75,9 @@ public class Personaje {
     public int getDefensaSpecial(){
         return this.defensaSpecial;
     }
+    public int setDefensaSpecial(int defensaSpecial){
+        return this.defensaSpecial=defensaSpecial;
+    }
     public int getVelocidad(){
         return this.velocidad;
     }
@@ -90,54 +93,62 @@ public class Personaje {
         }
         return masRapido;
     }
+    public void recargarAtaqueSpecial(){
+        ataqueDisponible++;
+    }
 
-    private int muerte(int ataqueRealizado, Personaje personaje){
+    public void realizarAtaque(Personaje personaje){
+        String tipoAtaque="ataque";
+        accionDeAtaque(personaje, this.ataque, tipoAtaque);
+    }
+
+    public void realizarAtaqueSpecial(Personaje personaje){
+        int ataqueSpecial=this.ataque+this.ataqueSpecial;
+        String tipoAtaque="ataque especial";
+        if (ataqueDisponible==0){
+            System.out.println(this.nombre+ " ha gastado ya sus ataques especiales");
+        }else{
+            accionDeAtaque(personaje, ataqueSpecial,tipoAtaque);
+            this.ataqueDisponible--;
+        }
+    }
+
+    private void accionDeAtaque(Personaje personaje, int ataque, String tipoAtaque){
+        if (!this.muerto){
+        int ataqueRealizado=infoAtaque(personaje, ataque, tipoAtaque);
+        ataqueRealizado = quitarAtaqueNegativo(ataqueRealizado);
+        int vidaRestante=comprobarMuerte(ataqueRealizado, personaje); 
+        personaje.setVida(vidaRestante);
+        personaje.comprobarVida(); //para saber si ha muerto o no
+        }
+    }
+
+    private int infoAtaque (Personaje personaje, int ataque, String tipoAtaque){
+        int ataqueRealizado= ataque - personaje.getDefensa();
+        System.out.println("Parece que "+ this.nombre + " va a usar un "+tipoAtaque+ " con un total de " + ataque + " puntos de fuerza");
+        System.out.println(personaje.getNombre()+ " antes del ataque tiene " + personaje.getVida() + " puntos de vida");
+        System.out.println(personaje.getNombre() + " se defenderá como pueda con " + personaje.getDefensa() + " puntos de defensa");
+        return ataqueRealizado;
+    }
+
+    private int quitarAtaqueNegativo (int ataqueRealizado){
+        if (ataqueRealizado<=0){ //para evitar números negativos y que los ataques no sumen vida
+        ataqueRealizado=0;
+        }
+        return ataqueRealizado;
+    }
+
+    private int comprobarMuerte(int ataqueRealizado, Personaje personaje){
         int vidaRestante=personaje.getVida()-ataqueRealizado;
         if (vidaRestante<=0 && sobrevivir){ //la variable sobrevivir hace que solo se pueda invocar la defensa especial una sola vez
             System.out.println("Parece que " + personaje.getNombre() + " se ha visto obligado a usar su Defensa Especial de "+ personaje.getDefensaSpecial()+" puntos para evitar la muerte");
             System.out.println("Ya no dispondrá de más usos de su defensa especial");
             ataqueRealizado-=personaje.getDefensaSpecial();
-            if (ataqueRealizado<=0){
-                ataqueRealizado=0;
-            }
+            ataqueRealizado=quitarAtaqueNegativo(ataqueRealizado);
             vidaRestante = personaje.getVida()-ataqueRealizado;
             sobrevivir=false;
         }
         return vidaRestante;
-    }
-
-    public void ataque(Personaje personaje){
-        if(!this.muerto){
-            System.out.println(this.nombre + " ataca con una fuerza de " +this.ataque + " puntos");
-            System.out.println(personaje.getNombre() + " defiende con " +personaje.getDefensa() + " puntos");
-            int ataqueRealizado=this.ataque - personaje.getDefensa();
-            if (ataqueRealizado<=0){ //para evitar números negativos y que los ataques no sumen vida
-                ataqueRealizado=0;
-            }
-            int vidaRestante=muerte(ataqueRealizado, personaje);
-            personaje.setVida(vidaRestante);
-            personaje.comprobarVida();
-        }
-    }
-
-    public void ataqueSpecial(Personaje personaje){
-        if (ataqueDisponible==0){
-            System.out.println(this.nombre+ " ha gastado ya sus ataques especiales");
-        }else{
-            if(!this.muerto){
-                System.out.println("Parece que "+ this.nombre + " va a usar un ataque especial con un total de " +this.ataque+this.ataqueSpecial + " puntos de fuerza");
-                System.out.println(personaje.getNombre() + " se defenderá como pueda con " +personaje.getDefensa() + " puntos de defensa");
-                int ataqueRealizado=(this.ataqueSpecial+this.ataque) - (personaje.getDefensa());
-                if (ataqueRealizado<=0){ //para evitar números negativos y que los ataques no sumen vida
-                    ataqueRealizado=0;
-                }
-                int vidaRestante=muerte(ataqueRealizado, personaje);
-                personaje.setVida(vidaRestante);
-                personaje.comprobarVida();
-                this.ataqueDisponible--;
-            }
-        }
-        
     }
 
     private void comprobarVida (){

@@ -12,12 +12,12 @@ public class Personaje {
     private int ataqueSpecial;
     private int defensaSpecial;
     private int velocidad;
-    private int ataqueDisponible; //solo un ataque Especial
+    private int ataquesDisponibles; //solo un ataque Especial
     private boolean sobrevivir; //solo una Defensa Especial
     private boolean muerto; //para saber si ha muerto o no
 
     public Personaje(){
-        this.ataqueDisponible=1;
+        this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
     }
@@ -31,7 +31,7 @@ public class Personaje {
         this.ataqueSpecial=ataqueSpecial;
         this.defensaSpecial=defensaSpecial;
         this.velocidad=velocidad;
-        this.ataqueDisponible=1;
+        this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
     }
@@ -45,7 +45,7 @@ public class Personaje {
         this.ataqueSpecial= (int)(Math.random()*50+1);
         this.defensaSpecial=(int)(Math.random()*50+1);
         this.velocidad=(int)(Math.random()*50+1);
-        this.ataqueDisponible=1;
+        this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
     }
@@ -99,9 +99,14 @@ public class Personaje {
         return this.velocidad=velocidad;
     }
     public int getAtaquesEspecialesDisponibles(){
-        return this.ataqueDisponible;
+        return this.ataquesDisponibles;
     }
 
+    @Override
+    public String toString(){
+        return "El personaje "+ this.nombre + " tiene " + this.vida + " puntos de vida, " + this.ataque + " puntos de ataque, " + this.defensa  + " puntos de defensa, " + this.ataqueSpecial + " puntos de ataque especial, " + this.defensaSpecial + " puntos de defensa especial, " + this.velocidad + " velocidad y " + this.ataquesDisponibles + " ataque(s) especiale(s) disponible(s)";
+    }
+    
     //Devuelve true si el personaje que lo invoca es más Rápido que el objetivo
     public boolean compararVelocidad(Personaje personaje){
         boolean masRapido=false;
@@ -111,7 +116,7 @@ public class Personaje {
         return masRapido;
     }
     public void recargarAtaqueSpecial(){
-        ataqueDisponible++;
+        ataquesDisponibles++;
         System.out.println(this.nombre + " tiene disponibles " + getAtaquesEspecialesDisponibles() + " ataques especiales disponibles");
     }
 
@@ -123,11 +128,11 @@ public class Personaje {
     public void realizarAtaqueSpecial(Personaje personaje){
         int ataqueSpecial=this.ataque+this.ataqueSpecial;
         String tipoAtaque="ataque especial";
-        if (ataqueDisponible==0){
+        if (ataquesDisponibles==0){
             System.out.println(this.nombre+ " ha gastado ya sus ataques especiales");
         }else{
             accionDeAtaque(personaje, ataqueSpecial,tipoAtaque);
-            this.ataqueDisponible--;
+            this.ataquesDisponibles--;
         }
     }
 

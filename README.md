@@ -8,13 +8,13 @@ El modo batallón, será una colección de personajes que se enfrenten a otro ba
 
 ## Atributos del personaje:
 
-Nombre
-Liga (JUSTICIA, TERROR, NEUTRAL, PICARO, JUVENIL)
-Vida
-Ataque
-AtaqueSpecial
-DefensaSpecial
-Velocidad
+* Nombre
+* Liga (JUSTICIA, TERROR, NEUTRAL, PICARO, JUVENIL)
+* Vida
+* Ataque
+* AtaqueSpecial
+* DefensaSpecial
+* Velocidad
 
 
 ## JUEGO INDIVIDUAL

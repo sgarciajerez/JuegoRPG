@@ -14,14 +14,12 @@ public class Coliseo {
     public Coliseo(){
         Personajes = new ArrayList<Personaje>();
         numeroLuchadores=0;
-        tipoColiseo=tipoColiseo.INDIVIDUAL;
     }
 
     public Coliseo (String nombreColiseo){
         Personajes = new ArrayList<Personaje>();
         this.nombreColiseo=nombreColiseo;
         numeroLuchadores=0;
-        tipoColiseo=tipoColiseo.INDIVIDUAL;
     }
 
     public String getNombre(){

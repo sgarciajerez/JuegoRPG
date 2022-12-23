@@ -89,12 +89,6 @@ public class Principal {
         return opcionSeleccionada;
     }
 
-    public static Coliseo crearColiseo(){
-        Coliseo coliseoCreado;
-        coliseoCreado = new Coliseo();
-        return coliseoCreado;
-    }
-
     public static Liga pedirLiga(){
         int opcion;
         Liga liga = null;
@@ -113,11 +107,11 @@ public class Principal {
 
             switch(opcion){
                 case 1 : {
-                    liga=Liga.JUSTICIA;
+                    liga = Liga.JUSTICIA;
                     break;
                 }
                 case 2 : {
-                    liga=Liga.JUVENIL;
+                    liga = Liga.JUVENIL;
                     break;
                 }
                 case 3 : {
@@ -168,7 +162,7 @@ public class Principal {
 
     }
 
-    public static Personaje crearPersonajeSinAtributos () {
+    public static Personaje crearPersonajeSinAtributos() {
         String nombre;
         Liga liga;
         Personaje personajeCreado;
@@ -181,20 +175,20 @@ public class Principal {
 
     public static Personaje elegirLuchador(Coliseo coliseoCreado, int numeroLuchador){
         int indice=0;
-        boolean encontrado=false;
+        boolean luchadorElegido=false;
 
         limpiarPantalla();
         System.out.println("------------ ES EL TURNO DE ELEGIR AL LUCHADOR " + numeroLuchador + " ------------");
 
-        while(!encontrado){
+        while(!luchadorElegido){
             System.out.println("Ahora mismo hay disponibles los siguientes luchadores: ");
             coliseoCreado.mostrarLuchadoresDisponibles();
             System.out.println("Dame el número del luchador que quieres escoger: ");
             indice=introducirNumero();
             if (indice<coliseoCreado.getNumeroLuchadores() && coliseoCreado.getLuchador(indice).getLuchadorDisponible()){
-                encontrado=true;
+                luchadorElegido=true;
             }
-            if (!encontrado){
+            if (!luchadorElegido){
                 System.out.println("Vaya, parece que no hemos encontrado o ya has usado a ese luchador");
                 System.out.println("Te recuerdo que los luchadores disponibles son: ");
                 coliseoCreado.mostrarLuchadoresDisponibles();
@@ -275,7 +269,7 @@ public class Principal {
         Coliseo coliseoCreado;
         Personaje personajeCreado;
 
-        coliseoCreado=crearColiseo();
+        coliseoCreado = new Coliseo();
         
         do{
             opcionSeleccionada=menuPrincipal();
@@ -302,6 +296,10 @@ public class Principal {
                                             pulseIntro();
                                             break;
                                         }
+                                        case 3 : {
+                                            //caso de salida
+                                            break;
+                                        }
                                         default :{
                                             mostrarError(1);
                                         }
@@ -317,31 +315,37 @@ public class Principal {
                                 break;
                             }
                             case 3: {
-                                //Batallar
-                                Personaje luchador1;
-                                Personaje luchador2;
-                                int numeroLuchador=1;
-                                int turnos=1;
+                                if (coliseoCreado.getNumeroLuchadores()>1){
+                                    //Batallar
+                                    Personaje luchador1;
+                                    Personaje luchador2;
+                                    int numeroLuchador=1;
+                                    int turnos=1;
 
-                                luchador1=elegirLuchador(coliseoCreado, numeroLuchador);
-                                numeroLuchador++;
-                                luchador2=elegirLuchador(coliseoCreado,numeroLuchador);
+                                    luchador1=elegirLuchador(coliseoCreado, numeroLuchador);
+                                    numeroLuchador++;
+                                    luchador2=elegirLuchador(coliseoCreado,numeroLuchador);
 
-                                opcionPelea(luchador1, luchador2, turnos);
-                                opcionPelea(luchador2, luchador1, turnos);
-                                turnos++;
-
-                                while(luchador1.getVida()>0 && luchador2.getVida()>0){
-                                    if (luchador1.compararVelocidad(luchador2)){
-                                        opcionPelea(luchador1, luchador2, turnos);
-                                        opcionPelea(luchador2, luchador1, turnos);
-                                    } else{
-                                        opcionPelea(luchador2, luchador1, turnos);
-                                        opcionPelea(luchador1, luchador2, turnos);
-                                    }
+                                    //En el primer turno debe de atacar el personaje creado primero
+                                    opcionPelea(luchador1, luchador2, turnos);
+                                    opcionPelea(luchador2, luchador1, turnos);
                                     turnos++;
-                                }
-                                comprobarGanador(luchador1,luchador2, coliseoCreado);
+
+                                    //A partir del turno dos, comprobamos la velocidad de los personajes 
+                                    //para decidir quién ataca primero
+
+                                    while(luchador1.getVida()>0 && luchador2.getVida()>0){
+                                        if (luchador1.compararVelocidad(luchador2)){
+                                            opcionPelea(luchador1, luchador2, turnos);
+                                            opcionPelea(luchador2, luchador1, turnos);
+                                        } else{
+                                            opcionPelea(luchador2, luchador1, turnos);
+                                            opcionPelea(luchador1, luchador2, turnos);
+                                        }
+                                        turnos++;
+                                    }
+                                    comprobarGanador(luchador1,luchador2, coliseoCreado);
+                                }   
                                 break;
                             }
                             case 4 : {
@@ -361,8 +365,7 @@ public class Principal {
                 case 2: {
                     mostrarError(2);
                     break;
-                } 
-                
+                }
                 default: {
                     mostrarError(1);
                     break;

@@ -15,11 +15,13 @@ public class Personaje {
     private int ataquesDisponibles; //solo un ataque Especial
     private boolean sobrevivir; //solo una Defensa Especial
     private boolean muerto; //para saber si ha muerto o no
+    private boolean luchadorDisponible; //variable usada para definir si está disponible para elegir el luchador o no
 
     public Personaje(){
         this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
+        this.luchadorDisponible=true;
     }
 
     public Personaje (String nombre, Liga Liga, int vida, int ataque, int defensa, int ataqueSpecial, int defensaSpecial, int velocidad){
@@ -34,6 +36,7 @@ public class Personaje {
         this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
+        this.luchadorDisponible=true;
     }
 
     public Personaje (String nombre, Liga Liga){
@@ -48,6 +51,7 @@ public class Personaje {
         this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
+        this.luchadorDisponible=true;
     }
 
     public String getNombre(){
@@ -100,6 +104,12 @@ public class Personaje {
     }
     public int getAtaquesEspecialesDisponibles(){
         return this.ataquesDisponibles;
+    }
+    public boolean getLuchadorDisponible(){
+        return this.luchadorDisponible;
+    }
+    public void setLuchadorDisponible(boolean disponibilidad){
+        this.luchadorDisponible=disponibilidad;
     }
 
     @Override

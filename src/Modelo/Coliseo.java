@@ -61,6 +61,23 @@ public class Coliseo {
             contador++;
         }
     }
+    public void mostrarLuchadoresDisponibles(){
+        int contador=0;
+        for (Personaje personaje: Personajes){
+            if(personaje.getLuchadorDisponible()){
+            System.out.println(contador + ".- " + "Luchador de nombre: " + personaje.getNombre());
+            }
+            contador++;
+        }
+    }
 
+    public Personaje getLuchador(int indice){
+        return Personajes.get(indice);
+    }
+
+    public void eliminarLuchador (Personaje personaje){
+        Personajes.remove(personaje);
+        numeroLuchadores--;
+    }
     
 }

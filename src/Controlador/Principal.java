@@ -1,81 +1,60 @@
 package Controlador;
 import java.util.Scanner;
 
+import Modelo.Batalla;
+import Modelo.BatallaMultiple;
 import Modelo.Coliseo;
 import Modelo.Personaje;
-import Modelo.Coliseo.tipoColiseo;
 import Modelo.Personaje.Liga;
+import Modelo.Equipos;
 
 public class Principal {
 
     public static Scanner lector = new Scanner(System.in);
-
-    public static void limpiarPantalla(){
-        int espacios=200;
-        for (int i=0; i<espacios; i++){
-            System.out.println("");
-        }
-    }
-
-    public static void pulseIntro (){
-        System.out.println("Pulse Intro...");
-        lector.nextLine();
-        limpiarPantalla();
-    }
-
-    public static int introducirNumero(){
-        int numeroIntroducido=0;
-        System.out.println("Introduce un número válido: ");
-        try{
-            numeroIntroducido=lector.nextInt();
-        }catch(Exception e){
-            lector.nextLine(); //limpiamos Buffer
-            System.out.println("Ingresa un número por favor: ");
-            numeroIntroducido=lector.nextInt();
-        }
-        lector.nextLine(); //limpiamos Buffer
-        return numeroIntroducido;
-    }
-
-    public static void mostrarError(int numeroError){
-        switch(numeroError){
-            case 1 : {
-                System.out.println("Introduzca un numero válido por favor");
-                break;
-            }
-            case 2 : {
-                System.out.println("Esta funcionalidad se encuentra en desarrollo");
-                break;
-            }
-        }
-    }
 
     public static int menuPrincipal(){
         int opcionSeleccionada;
         limpiarPantalla();
         System.out.println("----------------RPG CAT AVENGERS-------------------");
         System.out.println("-------------Selecccione una opción----------------");
-        System.out.println("- 1.- Modo Invidual -------------------------------");
-        System.out.println("- 2.- Batallas Grupales ---------------------------");
+        System.out.println("- 1.- Crear Personaje -----------------------------");
+        System.out.println("- 2.- Mostrar Personajes Creados ------------------");
+        System.out.println("- 3.- Modo Invidual -------------------------------");
+        System.out.println("- 4.- Batallas Grupales ---------------------------");
         System.out.println("- 0.- Salir ---------------------------------------");
         System.out.println("---------------------------------------------------");
         opcionSeleccionada=introducirNumero();
         return opcionSeleccionada;
     }
 
-    public static int menuBatallaIndividual(){
-        int opcionSeleccionada;
-        limpiarPantalla();
-        System.out.println("-------RPG CAT AVENGERS: BATALLA INDIVIDUAL--------");
-        System.out.println("-------------Selecccione una opción----------------");
-        System.out.println("- 1.- Crear Personaje -----------------------------");
-        System.out.println("- 2.- Mostrar Personajes Creados ------------------");
-        System.out.println("- 3.- Batallar ------------------------------------");
-        System.out.println("- 4.- Salir ---------------------------------------");
-        System.out.println("---------------------------------------------------");
-        opcionSeleccionada=introducirNumero();
-        return opcionSeleccionada;
+    public static void crearPersonaje(Coliseo coliseoCreado, int opcionSeleccionada){
+        Personaje personajeCreado;
+        do {
+            opcionSeleccionada=menuPersonaje();
+            switch(opcionSeleccionada){
+                case 1: {
+                    personajeCreado=crearPersonajeConAtributos();
+                    coliseoCreado.anadirLuchador(personajeCreado);
+                    pulseIntro();
+                    break;
+                }
+                case 2: {
+                    personajeCreado=crearPersonajeSinAtributos();
+                    coliseoCreado.anadirLuchador(personajeCreado);
+                    pulseIntro();
+                    break;
+                }
+                case 3 : {
+                    //caso de salida
+                    break;
+                }
+                default :{
+                    mostrarError(1);
+                }
+            }
+        } while (opcionSeleccionada!=3);
     }
+
     public static int menuPersonaje(){
         int opcionSeleccionada;
         limpiarPantalla();
@@ -87,6 +66,42 @@ public class Principal {
         System.out.println("---------------------------------------------------");
         opcionSeleccionada=introducirNumero();
         return opcionSeleccionada;
+    }
+
+    public static Personaje crearPersonajeConAtributos(){
+        String nombre;
+        Liga liga;
+        Personaje personajeCreado;
+        int vida, ataque, defensa, ataqueSpecial, defensaSpecial, velocidad;
+
+        System.out.println("Introduce el nombre del personaje: ");
+        nombre=lector.nextLine();
+        liga=pedirLiga();
+        System.out.println("Introduce la vida del personaje");
+        vida=introducirNumero();
+        System.out.println("Introduce el ataque del personaje");
+        ataque=introducirNumero();
+        System.out.println("Introduce la defensa del personaje");
+        defensa=introducirNumero();
+        System.out.println("Introduce el ataque especial del personaje");
+        ataqueSpecial=introducirNumero();
+        System.out.println("Introduce la defensa especial del personaje");
+        defensaSpecial=introducirNumero();
+        System.out.println("Introduce la velocidad del personaje");
+        velocidad=introducirNumero();
+        personajeCreado = new Personaje(nombre, liga, vida, ataque, defensa, ataqueSpecial, defensaSpecial, velocidad);
+        return personajeCreado;
+    }
+
+    public static Personaje crearPersonajeSinAtributos() {
+        String nombre;
+        Liga liga;
+        Personaje personajeCreado;
+        System.out.println("Introduce el nombre del personaje: ");
+        nombre=lector.nextLine();
+        liga=pedirLiga();
+        personajeCreado= new Personaje (nombre, liga);
+        return personajeCreado;
     }
 
     public static Liga pedirLiga(){
@@ -135,131 +150,208 @@ public class Principal {
         } while (!opcionValida);
         return liga;
     }
-
-    public static Personaje crearPersonajeConAtributos(){
-        String nombre;
-        Liga liga;
-        Personaje personajeCreado;
-        int vida, ataque, defensa, ataqueSpecial, defensaSpecial, velocidad;
-
-        System.out.println("Dame el nombre del personaje: ");
-        nombre=lector.nextLine();
-        liga=pedirLiga();
-        System.out.println("Dame la vida del personaje: ");
-        vida=introducirNumero();
-        System.out.println("Dame el ataque del personaje: ");
-        ataque=introducirNumero();
-        System.out.println("Dame la defensa del personaje: ");
-        defensa=introducirNumero();
-        System.out.println("Dame el ataque especial del personaje: ");
-        ataqueSpecial=introducirNumero();
-        System.out.println("Dame la defensa especial del personaje: ");
-        defensaSpecial=introducirNumero();
-        System.out.println("Dame la velocidad del personaje: ");
-        velocidad=introducirNumero();
-        personajeCreado = new Personaje(nombre, liga, vida, ataque, defensa, ataqueSpecial, defensaSpecial, velocidad);
-        return personajeCreado;
-
-    }
-
-    public static Personaje crearPersonajeSinAtributos() {
-        String nombre;
-        Liga liga;
-        Personaje personajeCreado;
-        System.out.println("Dame el nombre del personaje: ");
-        nombre=lector.nextLine();
-        liga=pedirLiga();
-        personajeCreado= new Personaje (nombre, liga);
-        return personajeCreado;
-    }
-
-    public static Personaje elegirLuchador(Coliseo coliseoCreado, int numeroLuchador){
-        int indice=0;
-        boolean luchadorElegido=false;
-
-        limpiarPantalla();
-        System.out.println("------------ ES EL TURNO DE ELEGIR AL LUCHADOR " + numeroLuchador + " ------------");
-
-        while(!luchadorElegido){
-            System.out.println("Ahora mismo hay disponibles los siguientes luchadores: ");
-            coliseoCreado.mostrarLuchadoresDisponibles();
-            System.out.println("Dame el número del luchador que quieres escoger: ");
-            indice=introducirNumero();
-            if (indice<coliseoCreado.getNumeroLuchadores() && coliseoCreado.getLuchador(indice).getLuchadorDisponible()){
-                luchadorElegido=true;
-            }
-            if (!luchadorElegido){
-                System.out.println("Vaya, parece que no hemos encontrado o ya has usado a ese luchador");
-                System.out.println("Te recuerdo que los luchadores disponibles son: ");
-                coliseoCreado.mostrarLuchadoresDisponibles();
-                System.out.println("Prueba otra vez respetando los numeros");
-                pulseIntro();
-            }
-        }
-        System.out.println("Has elegido como Luchador a " + coliseoCreado.getLuchador(indice).getNombre());
-        pulseIntro();
-        coliseoCreado.getLuchador(indice).setLuchadorDisponible(false);
-        return coliseoCreado.getLuchador(indice);
-    }
-
-    public static void opcionPelea (Personaje luchadorDelTurno, Personaje luchadorAtacado, int turno){
-        boolean turnoFinalizado = false;
-        int opcionSeleccionada;
-
-        if (luchadorDelTurno.getVida()>0){
-            while (!turnoFinalizado){
-                limpiarPantalla();
-                System.out.println("---------------TURNO " + turno + " DE " + luchadorDelTurno.getNombre().toUpperCase() + " ------------");
-                System.out.println("-------------Selecccione una opción----------------");
-                System.out.println("- 1.- Ataque --------------------------------------");
-                System.out.println("- 2.- Ataque Especial -----------------------------");
-                System.out.println("- 3.- Recargar Ataque Especial --------------------");
-                System.out.println("- 4.- Mostrar Stats -------------------------------");
-                System.out.println("---------------------------------------------------");
-                opcionSeleccionada=introducirNumero();
     
-                switch(opcionSeleccionada){
-                    case 1 :{
-                        luchadorDelTurno.realizarAtaque(luchadorAtacado);
-                        turnoFinalizado=true;
-                        break;
-                    }
-                    case 2: {
-                        luchadorDelTurno.realizarAtaqueSpecial(luchadorAtacado);
-                        turnoFinalizado=true;
-                        break;
-                    }
-                    case 3 : {
-                        luchadorDelTurno.recargarAtaqueSpecial();
-                        turnoFinalizado=true;
-                        break;
-                    }
-                    case 4 : {
-                        System.out.println(luchadorDelTurno.toString());
-                        break;
-                    }
-                    default : {
-                        mostrarError(1);
-                        break;
-                    }
-                }
-                pulseIntro();
+    public static void mostrarLuchadores(Coliseo coliseoCreado){
+        int numeroDeLuchadores=coliseoCreado.getNumeroLuchadores();
+        if (numeroDeLuchadores!=0){
+            coliseoCreado.mostrarLuchadores();
+            pulseIntro();
             }
-        } 
     }
 
-    public static void comprobarGanador(Personaje luchador1, Personaje luchador2, Coliseo coliseoCreado){
+    public static Equipos llenarEquipo(Coliseo coliseo) {
+        boolean estaEquipoLleno;
+        Personaje luchadorAnadido;
+        Equipos equipo = new Equipos();
+        System.out.println("VAMOS A CREAR UN NUEVO EQUIPO");
+
+        do{
+            estaEquipoLleno=equipo.estaElEquipoLleno(coliseo);
+            if (!estaEquipoLleno) {
+                luchadorAnadido=elegirLuchador(coliseo);
+                equipo.anadirLuchadorEquipo(luchadorAnadido);
+            }   
+        } while (!estaEquipoLleno);
         limpiarPantalla();
-        if (luchador1.getVida()>0){
-            System.out.println("HA GANADO " + luchador1.getNombre().toUpperCase());
-            luchador1.setLuchadorDisponible(true);
-            coliseoCreado.eliminarLuchador(luchador2);
-        } else{
-            System.out.println("HA GANADO " + luchador2.getNombre().toUpperCase());
-            luchador2.setLuchadorDisponible(true);
-            coliseoCreado.eliminarLuchador(luchador1);
+        System.out.println("SE HA CREADO UN NUEVO EQUIPO DE TAMAÑO " + equipo.getTamanoEquipo());
+        equipo.mostrarEquipo();
+        pulseIntro();
+        return equipo;
+    }
+
+    public static Personaje elegirLuchador(Coliseo coliseo){
+        int index;
+        boolean puedoElegirLuchador=false;
+        Personaje luchadorElegido;
+        do{
+            limpiarPantalla();
+            coliseo.mostrarLuchadoresDisponibles();
+            index=introducirNumero();
+            puedoElegirLuchador=coliseo.comprobarSiPuedoElegirLuchador(index);
+        } while (!puedoElegirLuchador);
+        luchadorElegido=coliseo.getLuchador(index);
+        System.out.println("Has elegido como Luchador a " + luchadorElegido.getNombre());
+        luchadorElegido.setLuchadorDisponible(false);
+        return luchadorElegido;
+    }
+
+    public static void realizarAccionIndividual(Batalla batalla){
+        boolean turnoFinalizado=false;
+        int opcionSeleccionada;
+        String mostrarInfoLuchador;
+
+        do {
+            limpiarPantalla();
+            enfrentarVelocidadLuchadores(batalla);
+            batalla.mostrarMenuBatalla();
+            opcionSeleccionada=introducirNumero();
+            switch(opcionSeleccionada){
+                case 1 :{
+                    batalla.atacar();
+                    turnoFinalizado=true;
+                    break;
+                }
+                case 2: {
+                    batalla.atacarEspecial();
+                    turnoFinalizado=true;
+                    break;
+                }
+                case 3 : {
+                    batalla.recargarAtaqueSpecial();
+                    turnoFinalizado=true;
+                    break;
+                }
+                case 4 : {
+                    mostrarInfoLuchador=batalla.getLuchadorTurno().toString();
+                    System.out.println(mostrarInfoLuchador);
+                    break;
+                }
+                default : {
+                    mostrarError(1);
+                    break;
+                }
+            }
+            pulseIntro();
+        } while (!turnoFinalizado);
+    }
+
+    public static void realizarAccionMultiple(BatallaMultiple batalla){
+        boolean turnoFinalizado=false;
+        int opcionSeleccionada;
+        String mostrarInfoLuchador;
+        Personaje luchadorCambiado;
+
+        do {
+            limpiarPantalla();
+            enfrentarVelocidadLuchadores(batalla);
+            batalla.mostrarMenuBatalla();
+            opcionSeleccionada=introducirNumero();
+            switch(opcionSeleccionada){
+                case 1 :{
+                    batalla.atacar();
+                    turnoFinalizado=true;
+                    break;
+                }
+                case 2: {
+                    batalla.atacarEspecial();
+                    turnoFinalizado=true;
+                    break;
+                }
+                case 3 : {
+                    batalla.recargarAtaqueSpecial();
+                    turnoFinalizado=true;
+                    break;
+                }
+                case 4 : {
+                    mostrarInfoLuchador=batalla.getLuchadorTurno().toString();
+                    System.out.println(mostrarInfoLuchador);
+                    break;
+                }
+                case 5 : {
+                    System.out.println(batalla.getLuchadorTurno().getNombre());
+                    luchadorCambiado=cambiarLuchadorDeEquipo(batalla);
+                    batalla.setLuchadorTurno(luchadorCambiado);
+                    System.out.println(batalla.getLuchadorTurno().getNombre());
+                    System.out.println("Se ha cambiado al luchador por " + batalla.getLuchadorTurno().getNombre());
+                    turnoFinalizado=true;
+                    break;
+                }
+                default : {
+                    mostrarError(1);
+                    break;
+                }
+            }
+            pulseIntro();
+        } while (!turnoFinalizado);
+    }
+
+    public static Personaje cambiarLuchadorDeEquipo(BatallaMultiple batalla){
+        int index;
+        boolean sePuedeCambiarLuchador;
+        Personaje luchadorCambiado;
+
+        do {
+            batalla.getEquipoDelTurno().mostrarEquipo();
+            index = introducirNumero();
+            sePuedeCambiarLuchador = batalla.sePuedeCambiarLuchador(index);
+            if (!sePuedeCambiarLuchador) {
+                System.err.println("No se ha encontrado en el equipo el luchador que quieres cambiar, prueba otra vez");
+            }
+        } while (!sePuedeCambiarLuchador);
+        luchadorCambiado=batalla.getEquipoDelTurno().getLuchador(index);
+        return luchadorCambiado;
+    }
+    
+    public static void enfrentarVelocidadLuchadores(Batalla batalla){
+        if (batalla.getTurnos()==3){ //En el turno 3 ha atacado una vez cada luchador
+            //en los requerimientos se pide que se enfrente la velocidad después de que ataque una vez cada luchador
+            batalla.establecerOrdenDeTurnosPorVelocidad();
         }
-        System.out.println("ENHORABUENA AL GANADOR");
+    }
+
+    public static void limpiarPantalla(){
+        int espacios=200;
+        for (int i=0; i<espacios; i++){
+            System.out.println("");
+        }
+    }
+
+    public static void pulseIntro (){
+        System.out.println("Pulse Intro...");
+        lector.nextLine();
+        limpiarPantalla();
+    }
+
+    public static int introducirNumero(){
+        int numeroIntroducido=0;
+        System.out.println("Introduce un número válido: ");
+        try{
+            numeroIntroducido=lector.nextInt();
+        }catch(Exception e){
+            lector.nextLine(); //limpiamos Buffer
+            System.out.println("Ingresa un número por favor: ");
+            numeroIntroducido=lector.nextInt();
+        }
+        lector.nextLine(); //limpiamos Buffer
+        return numeroIntroducido;
+    }
+
+    public static void mostrarError(int numeroError){
+        switch(numeroError){
+            case 1 : {
+                System.out.println("Introduzca un numero válido por favor");
+                break;
+            }
+            case 2 : {
+                System.out.println("Necesitas un número par de luchadores para jugar el modo Batalla Múltiple");
+                System.out.println("Prueba a añadir uno más");
+                break;
+            }
+            case 3 : {
+                System.out.println("Vaya, parece que no hemos encontrado o ya has usado a ese luchador");
+                System.out.println("Prueba otra vez respetando los numeros");
+            }
+        }
         pulseIntro();
     }
 
@@ -267,103 +359,111 @@ public class Principal {
 
         int opcionSeleccionada;
         Coliseo coliseoCreado;
-        Personaje personajeCreado;
+        Personaje luchadorTurno;
+        Personaje luchadorAtacado;
+        boolean estaBatallaTerminada;
 
         coliseoCreado = new Coliseo();
         
         do{
             opcionSeleccionada=menuPrincipal();
             switch(opcionSeleccionada){
-                case 1: {
-                    //Modo Individual
-                    coliseoCreado.setTipoColiseo(tipoColiseo.INDIVIDUAL);
-                    do {
-                        opcionSeleccionada=menuBatallaIndividual();
-                        switch(opcionSeleccionada){
-                            case 1: {
-                                do {
-                                    opcionSeleccionada=menuPersonaje();
-                                    switch(opcionSeleccionada){
-                                        case 1: {
-                                            personajeCreado=crearPersonajeConAtributos();
-                                            coliseoCreado.anadirLuchador(personajeCreado);
-                                            pulseIntro();
-                                            break;
-                                        }
-                                        case 2: {
-                                            personajeCreado=crearPersonajeSinAtributos();
-                                            coliseoCreado.anadirLuchador(personajeCreado);
-                                            pulseIntro();
-                                            break;
-                                        }
-                                        case 3 : {
-                                            //caso de salida
-                                            break;
-                                        }
-                                        default :{
-                                            mostrarError(1);
-                                        }
-                                    }
-                                } while (opcionSeleccionada!=3);
-                                break;
-                            }
-                            case 2: {
-                                if (coliseoCreado.getNumeroLuchadores()!=0){
-                                coliseoCreado.mostrarLuchadores();
-                                pulseIntro();
-                                }
-                                break;
-                            }
-                            case 3: {
-                                if (coliseoCreado.getNumeroLuchadores()>1){
-                                    //Batallar
-                                    Personaje luchador1;
-                                    Personaje luchador2;
-                                    int numeroLuchador=1;
-                                    int turnos=1;
-
-                                    luchador1=elegirLuchador(coliseoCreado, numeroLuchador);
-                                    numeroLuchador++;
-                                    luchador2=elegirLuchador(coliseoCreado,numeroLuchador);
-
-                                    //En el primer turno debe de atacar el personaje creado primero
-                                    opcionPelea(luchador1, luchador2, turnos);
-                                    opcionPelea(luchador2, luchador1, turnos);
-                                    turnos++;
-
-                                    //A partir del turno dos, comprobamos la velocidad de los personajes 
-                                    //para decidir quién ataca primero
-
-                                    while(luchador1.getVida()>0 && luchador2.getVida()>0){
-                                        if (luchador1.compararVelocidad(luchador2)){
-                                            opcionPelea(luchador1, luchador2, turnos);
-                                            opcionPelea(luchador2, luchador1, turnos);
-                                        } else{
-                                            opcionPelea(luchador2, luchador1, turnos);
-                                            opcionPelea(luchador1, luchador2, turnos);
-                                        }
-                                        turnos++;
-                                    }
-                                    comprobarGanador(luchador1,luchador2, coliseoCreado);
-                                }   
-                                break;
-                            }
-                            case 4 : {
-                                //Volver al menú principal
-                                break;
-                            }
-                            default : {
-                                mostrarError(1);
-                                break;
-                            }
-                        }
-
-                    } while (opcionSeleccionada!=4);
+                case 1 : {
+                    crearPersonaje(coliseoCreado, opcionSeleccionada);
                     break;
-                } 
-                
-                case 2: {
-                    mostrarError(2);
+                }
+                case 2 : {
+                    mostrarLuchadores(coliseoCreado);
+                    break;
+                }
+                case 3: {
+                    //Modo Individual
+                    Batalla batallaIndividual;
+                    boolean alMenosDosLuchadores=coliseoCreado.getNumeroLuchadores()>1;
+                    if (alMenosDosLuchadores){
+                        luchadorTurno = elegirLuchador(coliseoCreado);
+                        luchadorAtacado = elegirLuchador(coliseoCreado);
+                        batallaIndividual = new Batalla(luchadorTurno, luchadorAtacado);
+
+                        //Batallar
+                        batallaIndividual.condicionarStatsPorLiga();
+                        do {
+                            realizarAccionIndividual(batallaIndividual);
+                            estaBatallaTerminada = batallaIndividual.comprobarSiBatallaTerminada();
+                            if (!estaBatallaTerminada){
+                                batallaIndividual.alternarLuchadorAtacado();
+                                batallaIndividual.sumarTurno();
+                            }                   
+                        }while(!estaBatallaTerminada);
+                        batallaIndividual.terminarBatallaIndividual();
+                        pulseIntro();
+                    }else {
+                        mostrarError(2);
+                    }
+                }
+                case 4: {
+                    //Modo por Equipos
+                    BatallaMultiple batallaMultiple;
+
+                    boolean sonLuchadoresPar=coliseoCreado.getNumeroLuchadores()%2==0;
+                    boolean sonLuchadoresCero=coliseoCreado.getNumeroLuchadores()==0;
+                    boolean equipoEsDerrotado;
+
+                    if(sonLuchadoresPar && !sonLuchadoresCero){
+                        Equipos equipoDelTurno = llenarEquipo(coliseoCreado);
+                        Equipos equipoAtacado = llenarEquipo(coliseoCreado);
+                        luchadorTurno = equipoDelTurno.devolverUltimoPersonajeAnadido();
+                        luchadorAtacado = equipoAtacado.devolverUltimoPersonajeAnadido();
+                        batallaMultiple = new BatallaMultiple(luchadorTurno, luchadorAtacado, equipoDelTurno,equipoAtacado);
+
+                        System.out.println("Empezarán la batalla " + luchadorTurno.getNombre() + " y " + luchadorAtacado.getNombre() + ", que son los ultimos personajes añadidos: ");
+                        batallaMultiple.condicionarStatsPorLiga();
+                        pulseIntro();
+
+                        do{   
+                            System.out.println(batallaMultiple.getEquipoDelTurno().getTamanoEquipo());
+                            batallaMultiple.getEquipoDelTurno().mostrarEquipo();                     
+                            do {
+                                realizarAccionMultiple(batallaMultiple);
+                                estaBatallaTerminada = batallaMultiple.comprobarSiBatallaTerminada();
+                                if (!estaBatallaTerminada) {
+                                    System.out.println("Hola");
+                                    pulseIntro();                            
+                                    batallaMultiple.alternarLuchadorAtacado();
+                                    batallaMultiple.alternarEquipoAtacado();
+                                    batallaMultiple.sumarTurno();
+                                }
+                            } while (!estaBatallaTerminada);
+
+                            luchadorTurno=batallaMultiple.getLuchadorTurno();
+                            equipoDelTurno=batallaMultiple.getEquipoDelTurno();
+                            luchadorAtacado=batallaMultiple.getLuchadorAtacado();
+                            equipoAtacado=batallaMultiple.getEquipoAtacado();
+                            batallaMultiple.terminarBatallaMultiple();
+                            equipoAtacado.eliminarLuchadorDelEquipo(luchadorAtacado);
+                            batallaMultiple.setEquipoAtacado(equipoAtacado);
+                            coliseoCreado.eliminarLuchador(luchadorAtacado);
+                            equipoEsDerrotado = batallaMultiple.getEquipoAtacado().comprobarDerrota();
+                            
+                            if (!equipoEsDerrotado) {
+                                luchadorTurno.resetearStatsPersonaje();
+                                luchadorAtacado=batallaMultiple.getEquipoAtacado().devolverUltimoPersonajeAnadido();
+                                System.out.println("Hemos cambiado al luchador muerto por " +  luchadorAtacado.getNombre());
+                                System.out.println("Se han reseteado los turnos, por lo que empezará atacando " + luchadorAtacado.getNombre());
+                                batallaMultiple.setLuchadorAtacado(luchadorAtacado);
+                                batallaMultiple.alternarLuchadorAtacado();
+                                batallaMultiple.alternarEquipoAtacado();
+                                batallaMultiple.condicionarStatsPorLiga();
+                            }
+                            pulseIntro();
+                        } while (!equipoEsDerrotado);
+                        System.out.println("Ha ganado " + luchadorTurno.getNombre() + " y su equipo!");
+                        equipoDelTurno.resetearSupervivientes();
+                        pulseIntro();                  
+                    } 
+                    else {
+                        mostrarError(3);
+                    }
                     break;
                 }
                 default: {

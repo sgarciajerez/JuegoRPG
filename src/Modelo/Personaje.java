@@ -12,6 +12,12 @@ public class Personaje {
     private int ataqueSpecial;
     private int defensaSpecial;
     private int velocidad;
+    //para almacenar los valores que introduce el usuario o que se generan aleatoriamente
+    private int vidaOriginal;
+    private int ataqueOriginal;
+    private int defensaOriginal;
+    private int velocidadOriginal;
+
     private int ataquesDisponibles; //solo un ataque Especial
     private boolean sobrevivir; //solo una Defensa Especial
     private boolean muerto; //para saber si ha muerto o no
@@ -27,12 +33,16 @@ public class Personaje {
     public Personaje (String nombre, Liga Liga, int vida, int ataque, int defensa, int ataqueSpecial, int defensaSpecial, int velocidad){
         this.nombre=nombre;
         this.Liga=Liga;
-        this.vida=vida;
-        this.ataque=ataque;
-        this.defensa=defensa;
+        this.vidaOriginal=vida;
+        this.vida=vidaOriginal;
+        this.ataqueOriginal=ataque;
+        this.ataque=ataqueOriginal;
+        this.defensaOriginal=defensa;
+        this.defensa=defensaOriginal;
         this.ataqueSpecial=ataqueSpecial;
         this.defensaSpecial=defensaSpecial;
-        this.velocidad=velocidad;
+        this.velocidadOriginal=velocidad;
+        this.velocidad=velocidadOriginal;
         this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
@@ -42,12 +52,16 @@ public class Personaje {
     public Personaje (String nombre, Liga Liga){
         this.nombre=nombre;
         this.Liga=Liga;
-        this.vida= (int)(Math.random()*50+1);
-        this.ataque= (int)(Math.random()*50+1);
-        this.defensa= (int)(Math.random()*50+1);        
-        this.ataqueSpecial= (int)(Math.random()*50+1);
-        this.defensaSpecial=(int)(Math.random()*50+1);
-        this.velocidad=(int)(Math.random()*50+1);
+        this.vidaOriginal = (int)(Math.random()*50+1);
+        this.vida=vidaOriginal;
+        this.ataqueOriginal = (int)(Math.random()*50+1);
+        this.ataque=ataqueOriginal;
+        this.defensaOriginal = (int)(Math.random()*20+1);
+        this.defensa=defensaOriginal;        
+        this.ataqueSpecial = (int)(Math.random()*50+1);
+        this.defensaSpecial = (int)(Math.random()*50+1);
+        this.velocidadOriginal = (int)(Math.random()*50+1);
+        this.velocidad=velocidadOriginal;
         this.ataquesDisponibles=1;
         this.sobrevivir=true;
         this.muerto=false;
@@ -69,20 +83,23 @@ public class Personaje {
     public int getVida(){
         return this.vida;
     }
-    public void setVida (int vida){
-        this.vida=vida;
+    public void setVida (int vidaDada){
+        this.vidaOriginal=vidaDada;
+        this.vida=vidaDada;
     }
     public int getAtaque(){
         return this.ataque;
     }
-    public int setAtaque (int ataque){
-        return this.ataque=ataque;
+    public void setAtaque (int ataqueDado){
+        this.ataqueOriginal=ataqueDado;
+        this.ataque=ataqueDado;
     }
     public int getDefensa(){
         return this.defensa;
     }
-    public int setDefensa(int defensa){
-        return this.defensa=defensa;
+    public void setDefensa(int defensaDada){
+        this.defensaOriginal=defensaDada;
+        this.defensa=defensaDada;
     }
     public int getAtaqueSpecial(){
         return this.ataqueSpecial;
@@ -99,8 +116,9 @@ public class Personaje {
     public int getVelocidad(){
         return this.velocidad;
     }
-    public int setVelocidad (int velocidad){
-        return this.velocidad=velocidad;
+    public void setVelocidad (int velocidadDada){
+        this.velocidadOriginal=velocidadDada;
+        this.velocidad=velocidadDada;
     }
     public int getAtaquesEspecialesDisponibles(){
         return this.ataquesDisponibles;
@@ -111,23 +129,18 @@ public class Personaje {
     public void setLuchadorDisponible(boolean disponibilidad){
         this.luchadorDisponible=disponibilidad;
     }
+    public boolean getMuerte() {
+        return this.muerto;
+    }
 
     @Override
     public String toString(){
-        return "El personaje "+ this.nombre + " tiene " + this.vida + " puntos de vida, " + this.ataque + " puntos de ataque, " + this.defensa  + " puntos de defensa, " + this.ataqueSpecial + " puntos de ataque especial, " + this.defensaSpecial + " puntos de defensa especial, " + this.velocidad + " velocidad y " + this.ataquesDisponibles + " ataque(s) especiale(s) disponible(s)";
+        return "El personaje "+ this.nombre + " pertenece a la Liga " + this.Liga + " y tiene " + this.vida + " puntos de vida, " + this.ataque + " puntos de ataque, " + this.defensa  + " puntos de defensa, " + this.ataqueSpecial + " puntos de ataque especial, " + this.defensaSpecial + " puntos de defensa especial, " + this.velocidad + " velocidad y " + this.ataquesDisponibles + " ataque(s) especial(es) disponible(s)";
     }
-    
-    //Devuelve true si el personaje que lo invoca es más Rápido que el objetivo
-    public boolean compararVelocidad(Personaje personaje){
-        boolean masRapido=false;
-        if (this.velocidad>personaje.getVelocidad()){
-            masRapido=true;
-        }
-        return masRapido;
-    }
+
     public void recargarAtaqueSpecial(){
         ataquesDisponibles++;
-        System.out.println(this.nombre + " tiene disponibles " + getAtaquesEspecialesDisponibles() + " ataques especiales disponibles");
+        System.out.println(this.nombre + " tiene disponibles " + getAtaquesEspecialesDisponibles() + " ataques especiales");
     }
 
     public void realizarAtaque(Personaje personaje){
@@ -157,8 +170,9 @@ public class Personaje {
     }
 
     private int infoAtaque (Personaje personaje, int ataque, String tipoAtaque){
-        int ataqueRealizado= ataque - personaje.getDefensa();
-        System.out.println("Parece que "+ this.nombre + " va a usar un "+tipoAtaque+ " con un total de " + ataque + " puntos de fuerza");
+        int ataqueAleatorio = (int)(Math.random()*this.ataque+1);
+        int ataqueRealizado = ataqueAleatorio - personaje.getDefensa();
+        System.out.println("Parece que "+ this.nombre + " va a usar un "+tipoAtaque+ " con un total de " + ataqueAleatorio + " puntos de fuerza");
         System.out.println(personaje.getNombre()+ " antes del ataque tiene " + personaje.getVida() + " puntos de vida");
         System.out.println(personaje.getNombre() + " se defenderá como pueda con " + personaje.getDefensa() + " puntos de defensa");
         return ataqueRealizado;
@@ -191,5 +205,19 @@ public class Personaje {
         } else{
             System.out.println("A " +this.nombre + " le quedan " + this.vida + " puntos de vida");
         }
+    }
+
+    public void resetearStatsYVidaDelPersonaje() {
+        this.vida=vidaOriginal;
+        resetearStatsPersonaje();
+        System.out.println("Se han resetado las estadísticas de " + this.nombre);
+    }
+    
+    public void resetearStatsPersonaje(){
+        this.ataque=ataqueOriginal;
+        this.defensa=defensaOriginal;
+        this.velocidad=velocidadOriginal;
+        this.ataquesDisponibles=1;
+        this.luchadorDisponible=true;
     }
 }

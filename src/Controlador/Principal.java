@@ -106,7 +106,7 @@ public class Principal {
 
     public static Liga pedirLiga(){
         int opcion;
-        Liga liga = null;
+        Liga liga=Liga.JUSTICIA;
         boolean opcionValida;
         do{
             opcionValida=true;
@@ -235,10 +235,11 @@ public class Principal {
         } while (!turnoFinalizado);
     }
 
-    public static void realizarAccionMultiple(BatallaMultiple batalla){
-        boolean turnoFinalizado=false;
-        int opcionSeleccionada;
+    public static void realizarAccionMultiple(BatallaMultiple batalla){  //la única diferencia con la función realizarAcccionIndividual() es el caso 5
+        boolean turnoFinalizado=false;                                   // se ha hecho de esta forma debido a que se deben mostrar los resultados por pantalla
+        int opcionSeleccionada;                                          // y la forma más sencilla es pedir números y trabajar con el switch case
         String mostrarInfoLuchador;
+        Personaje luchadorActual = batalla.getLuchadorTurno();
         Personaje luchadorCambiado;
 
         do {
@@ -268,11 +269,10 @@ public class Principal {
                     break;
                 }
                 case 5 : {
-                    System.out.println(batalla.getLuchadorTurno().getNombre());
+                    System.out.println(luchadorActual.getNombre());
                     luchadorCambiado=cambiarLuchadorDeEquipo(batalla);
                     batalla.setLuchadorTurno(luchadorCambiado);
-                    System.out.println(batalla.getLuchadorTurno().getNombre());
-                    System.out.println("Se ha cambiado al luchador por " + batalla.getLuchadorTurno().getNombre());
+                    System.out.println("Se ha cambiado al luchador por " + luchadorCambiado.getNombre());
                     turnoFinalizado=true;
                     break;
                 }
@@ -309,23 +309,28 @@ public class Principal {
         }
     }
 
+    public static void eliminarAlPerdedorDelColiseo(Batalla batalla, Coliseo coliseoCreado) {
+        Personaje luchadorAtacado = batalla.getLuchadorAtacado(); //hay que comprobar quién es el luchadorAtacado
+        coliseoCreado.eliminarLuchador(luchadorAtacado);
+    }
+
     public static void eliminarLuchadorMuertoTrasBatallaMultiple(BatallaMultiple batallaMultiple, Coliseo coliseoCreado){
-        Personaje luchadorAtacado = batallaMultiple.getLuchadorAtacado();
+        Personaje luchadorAtacado = batallaMultiple.getLuchadorAtacado(); //hay que comprobar quién es el luchadorAtacado y el equipo atacado
         Equipos equipoAtacado = batallaMultiple.getEquipoAtacado();
 
         batallaMultiple.terminarBatallaMultiple();
-        equipoAtacado.eliminarLuchadorDelEquipo(luchadorAtacado);
+        equipoAtacado.eliminarLuchadorDelEquipo(luchadorAtacado); //borramos al personaje atacado
         batallaMultiple.setEquipoAtacado(equipoAtacado);
         coliseoCreado.eliminarLuchador(luchadorAtacado);
     }
 
     public static void resetearStatsDelLuchadorGanador(BatallaMultiple batallaMultiple) {
-        Personaje luchadorTurno=batallaMultiple.getLuchadorTurno();           
+        Personaje luchadorTurno=batallaMultiple.getLuchadorTurno();   //hay que comprobar quién es el equipo del turno        
         luchadorTurno.resetearStatsPersonaje(); 
     }
 
     public static void cambiarLuchadorMuertoPorElUltimoDeSuEquipo(BatallaMultiple batallaMultiple) {
-        Personaje luchadorAtacado=batallaMultiple.getEquipoAtacado().devolverUltimoPersonajeAnadido();
+        Personaje luchadorAtacado=batallaMultiple.getEquipoAtacado().devolverUltimoPersonajeAnadido(); //devolvemos ultimo personaje añadido al equipo atacado
         System.out.println("Hemos cambiado al luchador muerto por " +  luchadorAtacado.getNombre());
         System.out.println("Se han reseteado los turnos, por lo que empezará atacando " + luchadorAtacado.getNombre());
         batallaMultiple.setLuchadorAtacado(luchadorAtacado);
@@ -370,13 +375,12 @@ public class Principal {
                 break;
             }
             case 2 : {
-                System.out.println("Necesitas un número par de luchadores para jugar el modo Batalla Múltiple");
-                System.out.println("Prueba a añadir uno más");
+                System.out.println("Necesitas al menos dos luchadores para poder jugar este modo");
                 break;
             }
             case 3 : {
-                System.out.println("Vaya, parece que no hemos encontrado o ya has usado a ese luchador");
-                System.out.println("Prueba otra vez respetando los numeros");
+                System.out.println("Necesitas un número par de luchadores para jugar el modo Batalla Múltiple");
+                System.out.println("Prueba a añadir uno más");
             }
         }
         pulseIntro();
@@ -422,11 +426,13 @@ public class Principal {
                                 batallaIndividual.sumarTurno();
                             }                   
                         }while(!estaBatallaTerminada);
+                        eliminarAlPerdedorDelColiseo(batallaIndividual, coliseoCreado);
                         batallaIndividual.terminarBatallaIndividual();
                         pulseIntro();
                     }else {
                         mostrarError(2);
                     }
+                    break;
                 }
                 case 4: {
                     //Modo por Equipos

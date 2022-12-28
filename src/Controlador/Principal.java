@@ -309,6 +309,33 @@ public class Principal {
         }
     }
 
+    public static void eliminarLuchadorMuertoTrasBatallaMultiple(BatallaMultiple batallaMultiple, Coliseo coliseoCreado){
+        Personaje luchadorAtacado = batallaMultiple.getLuchadorAtacado();
+        Equipos equipoAtacado = batallaMultiple.getEquipoAtacado();
+
+        batallaMultiple.terminarBatallaMultiple();
+        equipoAtacado.eliminarLuchadorDelEquipo(luchadorAtacado);
+        batallaMultiple.setEquipoAtacado(equipoAtacado);
+        coliseoCreado.eliminarLuchador(luchadorAtacado);
+    }
+
+    public static void resetearStatsDelLuchadorGanador(BatallaMultiple batallaMultiple) {
+        Personaje luchadorTurno=batallaMultiple.getLuchadorTurno();           
+        luchadorTurno.resetearStatsPersonaje(); 
+    }
+
+    public static void cambiarLuchadorMuertoPorElUltimoDeSuEquipo(BatallaMultiple batallaMultiple) {
+        Personaje luchadorAtacado=batallaMultiple.getEquipoAtacado().devolverUltimoPersonajeAnadido();
+        System.out.println("Hemos cambiado al luchador muerto por " +  luchadorAtacado.getNombre());
+        System.out.println("Se han reseteado los turnos, por lo que empezará atacando " + luchadorAtacado.getNombre());
+        batallaMultiple.setLuchadorAtacado(luchadorAtacado);
+    }
+
+    public static void alternarLuchadorYEquipo (BatallaMultiple batallaMultiple) {
+        batallaMultiple.alternarLuchadorAtacado();
+        batallaMultiple.alternarEquipoAtacado();
+    }
+
     public static void limpiarPantalla(){
         int espacios=200;
         for (int i=0; i<espacios; i++){
@@ -420,39 +447,23 @@ public class Principal {
                         batallaMultiple.condicionarStatsPorLiga();
                         pulseIntro();
 
-                        do{   
-                            System.out.println(batallaMultiple.getEquipoDelTurno().getTamanoEquipo());
-                            batallaMultiple.getEquipoDelTurno().mostrarEquipo();                     
+                        do{                      
                             do {
                                 realizarAccionMultiple(batallaMultiple);
                                 estaBatallaTerminada = batallaMultiple.comprobarSiBatallaTerminada();
                                 if (!estaBatallaTerminada) {
-                                    System.out.println("Hola");
-                                    pulseIntro();                            
-                                    batallaMultiple.alternarLuchadorAtacado();
-                                    batallaMultiple.alternarEquipoAtacado();
+                                    alternarLuchadorYEquipo(batallaMultiple);
                                     batallaMultiple.sumarTurno();
                                 }
                             } while (!estaBatallaTerminada);
 
-                            luchadorTurno=batallaMultiple.getLuchadorTurno();
-                            equipoDelTurno=batallaMultiple.getEquipoDelTurno();
-                            luchadorAtacado=batallaMultiple.getLuchadorAtacado();
-                            equipoAtacado=batallaMultiple.getEquipoAtacado();
-                            batallaMultiple.terminarBatallaMultiple();
-                            equipoAtacado.eliminarLuchadorDelEquipo(luchadorAtacado);
-                            batallaMultiple.setEquipoAtacado(equipoAtacado);
-                            coliseoCreado.eliminarLuchador(luchadorAtacado);
+                            eliminarLuchadorMuertoTrasBatallaMultiple(batallaMultiple, coliseoCreado);
                             equipoEsDerrotado = batallaMultiple.getEquipoAtacado().comprobarDerrota();
-                            
+
                             if (!equipoEsDerrotado) {
-                                luchadorTurno.resetearStatsPersonaje();
-                                luchadorAtacado=batallaMultiple.getEquipoAtacado().devolverUltimoPersonajeAnadido();
-                                System.out.println("Hemos cambiado al luchador muerto por " +  luchadorAtacado.getNombre());
-                                System.out.println("Se han reseteado los turnos, por lo que empezará atacando " + luchadorAtacado.getNombre());
-                                batallaMultiple.setLuchadorAtacado(luchadorAtacado);
-                                batallaMultiple.alternarLuchadorAtacado();
-                                batallaMultiple.alternarEquipoAtacado();
+                                resetearStatsDelLuchadorGanador(batallaMultiple);
+                                cambiarLuchadorMuertoPorElUltimoDeSuEquipo(batallaMultiple);
+                                alternarLuchadorYEquipo(batallaMultiple);
                                 batallaMultiple.condicionarStatsPorLiga();
                             }
                             pulseIntro();
